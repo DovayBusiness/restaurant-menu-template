@@ -1,3 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { images: { unoptimized: true } };
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  images: { unoptimized: true },
+};
 export default nextConfig;
