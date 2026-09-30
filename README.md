@@ -12,7 +12,7 @@ Responsive Next.js 14 + TypeScript + Tailwind app for a bilingual Turkish restau
 
 1. Install Node.js 20+ and run `npm install`.
 2. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from a **new Supabase project dedicated to Irmak**.
-3. In that new project's SQL Editor, run `supabase/migrations/0001_irmak_schema.sql`. It creates and seeds the schema, access policies, waiter-call cooldown trigger, and Realtime publication membership.
+3. In that new project's SQL Editor, run `supabase/migrations/0001_irmak_schema.sql`. It creates and seeds the schema, access policies, order-validation and waiter-call cooldown triggers, and Realtime publication membership.
 4. Create an Auth user for each staff member. Set that user's server-managed `app_metadata.role` to `admin` using a trusted server/admin process (never expose a service-role key in the browser).
 5. Run `npm run dev` and open `http://localhost:3000/menu?table=5`.
 
@@ -24,7 +24,7 @@ The seeded Turkish menu, TRY prices, and Unsplash food photography are sample co
 
 - Use a separate, fresh Supabase project for Irmak. This migration is specifically intended for that database and must not be run against another product's project.
 - Only the public URL and anon/publishable key belong in `NEXT_PUBLIC_*`. Never commit a service-role key, Supabase management token, or staff credentials.
-- RLS restricts menu/table writes and dashboard reads/updates to authenticated users whose trusted `app_metadata.role` is `admin`; guest order and waiter-call inserts are allowed. The database enforces the 60-second per-table waiter-call cooldown as well as the UI timer.
+- RLS restricts menu/table writes and dashboard reads/updates to authenticated users whose trusted `app_metadata.role` is `admin`; guest order and waiter-call inserts are allowed. A database trigger recalculates order prices/totals from the current available menu, and the database enforces the 60-second per-table waiter-call cooldown as well as the UI timer.
 - `orders` and `waiter_calls` are members of `supabase_realtime`. Enable/confirm Realtime for those tables in the separate project if the project-level configuration requires it.
 
 ## Deploy

@@ -69,6 +69,59 @@ drop trigger if exists waiter_call_cooldown on public.waiter_calls;
 create trigger waiter_call_cooldown before insert on public.waiter_calls
 for each row execute function public.irmak_enforce_waiter_call_cooldown();
 
+-- Do not trust prices or totals posted by a guest's browser.
+create or replace function public.irmak_validate_order() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare
+  item jsonb;
+  normalized_items jsonb := '[]'::jsonb;
+  item_id uuid;
+  item_qty integer;
+  item_price integer;
+  item_name text;
+  item_available boolean;
+  computed_total bigint := 0;
+begin
+  if jsonb_typeof(NEW.items) is distinct from 'array'
+     or jsonb_array_length(NEW.items) < 1
+     or jsonb_array_length(NEW.items) > 50 then
+    raise exception 'An order must contain between 1 and 50 items.';
+  end if;
+  for item in select value from jsonb_array_elements(NEW.items)
+  loop
+    if jsonb_typeof(item) is distinct from 'object' then
+      raise exception 'Invalid order item.';
+    end if;
+    begin
+      item_id := (item->>'id')::uuid;
+      item_qty := (item->>'qty')::integer;
+    exception when invalid_text_representation or numeric_value_out_of_range then
+      raise exception 'Invalid menu item or quantity.';
+    end;
+    if item_qty < 1 or item_qty > 99 then
+      raise exception 'Item quantity must be between 1 and 99.';
+    end if;
+    select mi.price, mi.name_en, mi.is_available into item_price, item_name, item_available
+      from public.menu_items mi where mi.id = item_id;
+    if not found or not item_available then
+      raise exception 'A selected dish is unavailable.';
+    end if;
+    computed_total := computed_total + item_qty::bigint * item_price::bigint;
+    if computed_total > 2147483647 then
+      raise exception 'Order total is too large.';
+    end if;
+    normalized_items := normalized_items || jsonb_build_array(item || jsonb_build_object('price', item_price, 'name', item_name));
+  end loop;
+  NEW.items := normalized_items;
+  NEW.total := computed_total::integer;
+  return NEW;
+end;
+$$;
+drop trigger if exists validate_order on public.orders;
+create trigger validate_order before insert on public.orders
+for each row execute function public.irmak_validate_order();
+
 create or replace function public.irmak_is_admin() returns boolean
 language sql stable security definer set search_path = public
 as $$ select coalesce(auth.jwt()->'app_metadata'->>'role' = 'admin', false); $$;
