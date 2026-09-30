@@ -9,7 +9,8 @@ export const demoCategories:Category[] = [
  {id:'cat-6',slug:'drinks',name_en:'Drinks',name_tr:'İçecekler'},
  {id:'cat-7',slug:'desserts',name_en:'Desserts',name_tr:'Tatlılar'}
 ];
-const photos=['photo-1547592180-85f173990554','photo-1544025162-d76694265947','photo-1534939561126-855b8675edd7','photo-1473093295043-cdd812d0e601','photo-1555396273-367ea4eb4db5','photo-1513558161293-cdaf765edfd7','photo-1578985545062-69928b1d9587','photo-1532634896-26909d0d4b8c','photo-1546069901-ba9599a7e63c','photo-1547592180-85f173990554','photo-1544145945-f90425340c7e','photo-1488477181946-6428a0291777'];
+const photos=['arze-hummus.jpg','arze-tabbouleh.jpg','arze-baba-ghanouj.jpg','arze-kibbeh.jpg','arze-mixed-grill.jpg','arze-shish-taouk.jpg','arze-kafta.jpg','arze-chicken-shawarma.jpg','arze-zaatar-manoushe.jpg','arze-falafel-wrap.jpg','arze-mint-lemonade.jpg','photo-1488477181946-6428a0291777'];
+const imageBase=`${process.env.NEXT_PUBLIC_BASE_PATH||''}/images/`;
 const dishSeed=[
  ['Hummus bi Tahini','Tahinli Humus','Whipped chickpeas, tahini, lemon and Lebanese olive oil.','Tahin, limon ve Lübnan zeytinyağıyla hazırlanan humus.',220,0,['Vegetarian','Mezze'],true],
  ['Tabbouleh','Tabbule','Parsley, tomato, fine bulgur, mint and lemon.','Maydanoz, domates, ince bulgur, nane ve limon.',190,0,['Vegetarian','Fresh'],true],
@@ -24,4 +25,4 @@ const dishSeed=[
  ['Mint Lemonade','Naneli Limonata','Fresh lemon, garden mint and a touch of sweetness.','Taze limon, nane ve hafif şekerle hazırlanır.',160,5,['House favorite'],true],
  ['Lebanese Baklava','Lübnan Baklavası','Delicate pastry, pistachio and fragrant syrup.','İnce yufka, Antep fıstığı ve aromalı şerbet.',210,6,['Dessert'],true]
 ] as const;
-export const demoDishes:Dish[]=dishSeed.map((d,i)=>({id:`dish-${i+1}`,name_en:d[0],name_tr:d[1],desc_en:d[2],desc_tr:d[3],price:d[4],image_url:`https://images.unsplash.com/${photos[i]}?auto=format&fit=crop&w=900&q=82`,category_id:`cat-${d[5]+1}`,tags:[...d[6]],is_available:true,is_popular:d[7]}));
+export const demoDishes:Dish[]=dishSeed.map((d,i)=>({id:`dish-${i+1}`,name_en:d[0],name_tr:d[1],desc_en:d[2],desc_tr:d[3],price:d[4],image_url:photos[i].startsWith('photo-')?`https://images.unsplash.com/${photos[i]}?auto=format&fit=crop&w=900&q=82`:`${imageBase}${photos[i]}`,category_id:`cat-${d[5]+1}`,tags:[...d[6]],is_available:true,is_popular:d[7]}));
