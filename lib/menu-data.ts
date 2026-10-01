@@ -1,28 +1,18 @@
-export type Category = { id:string; slug:string; name_en:string; name_tr:string };
-export type Dish = { id:string; name_en:string; name_tr:string; desc_en:string; desc_tr:string; price:number; image_url:string; category_id:string; tags:string[]; is_available:boolean; is_popular:boolean };
-export const demoCategories:Category[] = [
- {id:'cat-1',slug:'mezze',name_en:'Mezze',name_tr:'Mezeler'},
- {id:'cat-2',slug:'grills',name_en:'Grills',name_tr:'Izgaralar'},
- {id:'cat-3',slug:'lebanese-plates',name_en:'Lebanese Plates',name_tr:'Lübnan Tabakları'},
- {id:'cat-4',slug:'manakish',name_en:'Manakish',name_tr:'Manakish'},
- {id:'cat-5',slug:'wraps',name_en:'Wraps',name_tr:'Dürümler'},
- {id:'cat-6',slug:'drinks',name_en:'Drinks',name_tr:'İçecekler'},
- {id:'cat-7',slug:'desserts',name_en:'Desserts',name_tr:'Tatlılar'}
-];
-const photos=['arze-hummus.jpg','arze-tabbouleh.jpg','arze-baba-ghanouj.jpg','arze-kibbeh.jpg','arze-mixed-grill.jpg','arze-shish-taouk.jpg','arze-kafta.jpg','arze-chicken-shawarma.jpg','arze-zaatar-manoushe.jpg','arze-falafel-wrap.jpg','arze-mint-lemonade.jpg','photo-1488477181946-6428a0291777'];
-const imageBase=`${process.env.NEXT_PUBLIC_BASE_PATH||''}/images/`;
-const dishSeed=[
- ['Hummus bi Tahini','Tahinli Humus','Whipped chickpeas, tahini, lemon and Lebanese olive oil.','Tahin, limon ve Lübnan zeytinyağıyla hazırlanan humus.',220,0,['Vegetarian','Mezze'],true],
- ['Tabbouleh','Tabbule','Parsley, tomato, fine bulgur, mint and lemon.','Maydanoz, domates, ince bulgur, nane ve limon.',190,0,['Vegetarian','Fresh'],true],
- ['Baba Ghanouj','Babagannuş','Smoky eggplant, tahini, garlic and pomegranate.','Köz patlıcan, tahin, sarımsak ve nar ekşisi.',210,0,['Vegetarian','Mezze'],false],
- ['Kibbeh','İçli Köfte','Crisp bulgur shell filled with spiced beef and pine nuts.','Baharatlı dana eti ve çam fıstıklı çıtır bulgur köftesi.',290,0,['Lebanese classic'],true],
- ['Mixed Grill','Karışık Lübnan Izgara','Kafta, shish taouk and lamb, hot from the charcoal grill.','Kafta, tavuk şiş ve kuzu eti, közden sıcak servis.',620,1,['Grilled','Chef special'],true],
- ['Shish Taouk','Şiş Tavuk','Garlic-marinated chicken, toum, pickles and warm pita.','Sarımsaklı marine tavuk, toum, turşu ve sıcak pita.',480,1,['Grilled','Popular'],true],
- ['Kafta Meshwi','Izgara Kafta','Parsley and spice-seasoned beef kafta with grilled vegetables.','Maydanozlu baharatlı dana kafta ve köz sebzeler.',470,1,['Grilled'],false],
- ['Chicken Shawarma Plate','Tavuk Şavurma Tabağı','Shawarma-spiced chicken, toum, pickles and rice.','Şavurma baharatlı tavuk, toum, turşu ve pilav.',430,2,['Popular'],true],
- ['Zaatar Manoushe','Za’atar Manuşe','Baked flatbread with za’atar, sumac, sesame and olive oil.','Za’atar, sumak, susam ve zeytinyağlı fırın ekmeği.',180,3,['Vegetarian','Baked fresh'],true],
- ['Falafel Wrap','Falafel Dürüm','Chickpea falafel, tahini, pickles and fresh herbs in pita.','Nohut falafeli, tahin, turşu ve taze otlarla pita dürüm.',320,4,['Vegetarian'],false],
- ['Mint Lemonade','Naneli Limonata','Fresh lemon, garden mint and a touch of sweetness.','Taze limon, nane ve hafif şekerle hazırlanır.',160,5,['House favorite'],true],
- ['Lebanese Baklava','Lübnan Baklavası','Delicate pastry, pistachio and fragrant syrup.','İnce yufka, Antep fıstığı ve aromalı şerbet.',210,6,['Dessert'],true]
+import menuSeed from './menu-seed.json';
+export type MenuSeedItem = { id:number; category:string; name_en:string; name_ar:string; description:string; ingredients:string; price_tl:number; tags:string[]; image_url:string };
+export type Category = { id:string; slug:string; name_en:string; name_ar:string; name_tr:string };
+export type Dish = { id:string; menu_number:number|null; category:string; name_en:string; name_ar:string; description:string; ingredients:string; price_tl:number; image_url:string; category_id:string; tags:string[]; is_available:boolean; is_popular:boolean; name_tr:string; desc_en:string; desc_tr:string; price:number };
+export const MENU = menuSeed as MenuSeedItem[];
+const categoryNames = [
+ {id:'cat-1',slug:'01-cold-mezze',name_en:"Cold Mezze",name_ar:"مقبلات باردة",name_tr:"مقبلات باردة"},
+ {id:'cat-2',slug:'02-salads',name_en:"Salads",name_ar:"سلطات",name_tr:"سلطات"},
+ {id:'cat-3',slug:'03-hot-mezze',name_en:"Hot Mezze",name_ar:"مقبلات ساخنة",name_tr:"مقبلات ساخنة"},
+ {id:'cat-4',slug:'04-manakish-breads',name_en:"Manakish & Breads",name_ar:"مناقيش وخبز",name_tr:"مناقيش وخبز"},
+ {id:'cat-5',slug:'05-grills',name_en:"Grills",name_ar:"مشاوي",name_tr:"مشاوي"},
+ {id:'cat-6',slug:'06-main-dishes',name_en:"Main Dishes",name_ar:"أطباق رئيسية",name_tr:"أطباق رئيسية"},
+ {id:'cat-7',slug:'07-desserts',name_en:"Desserts",name_ar:"حلويات",name_tr:"حلويات"},
+ {id:'cat-8',slug:'08-drinks',name_en:"Drinks",name_ar:"مشروبات",name_tr:"مشروبات"},
 ] as const;
-export const demoDishes:Dish[]=dishSeed.map((d,i)=>({id:`dish-${i+1}`,name_en:d[0],name_tr:d[1],desc_en:d[2],desc_tr:d[3],price:d[4],image_url:photos[i].startsWith('photo-')?`https://images.unsplash.com/${photos[i]}?auto=format&fit=crop&w=900&q=82`:`${imageBase}${photos[i]}`,category_id:`cat-${d[5]+1}`,tags:[...d[6]],is_available:true,is_popular:d[7]}));
+export const demoCategories:Category[]=categoryNames as unknown as Category[];
+const categoryId:Record<string,string>={"Cold Mezze":'cat-1',"Salads":'cat-2',"Hot Mezze":'cat-3',"Manakish & Breads":'cat-4',"Grills":'cat-5',"Main Dishes":'cat-6',"Desserts":'cat-7',"Drinks":'cat-8'};
+export const demoDishes:Dish[]=MENU.map(item=>({id:`demo-${item.id}`,menu_number:item.id,category:item.category,name_en:item.name_en,name_ar:item.name_ar,description:item.description,ingredients:item.ingredients,price_tl:item.price_tl,image_url:item.image_url,category_id:categoryId[item.category],tags:[...item.tags],is_available:true,is_popular:item.tags.includes('Popular'),name_tr:item.name_ar,desc_en:item.description,desc_tr:item.description,price:item.price_tl}));
